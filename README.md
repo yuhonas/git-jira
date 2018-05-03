@@ -2,6 +2,8 @@
 
 Generate git branch names based on JIRA Issues
 
+![demo-optimised](https://user-images.githubusercontent.com/4928/39577887-ee3ad1a6-4f25-11e8-9edd-76aeb0d5a7e5.gif)
+
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes
