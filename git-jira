@@ -1,0 +1,28 @@
+#!/bin/bash
+
+if [ $# -eq 0 ]
+then
+  echo 'Usage: git-jira [issue number]'
+  exit 2
+fi
+
+JIRA_ID=$1
+
+JIRA_ISSUE=$(curl --netrc --fail --silent --header 'Accept: application/json' \
+  --url "https://locomote.atlassian.net/rest/api/2/issue/$JIRA_ID?fields=summary,issuetype")
+
+ISSUE_SUMMARY=$(echo $JIRA_ISSUE | jq -r '.fields.summary' | sed -e "s/ /\_/g" | tr "[:upper:]" "[:lower:]")
+
+ISSUE_TYPE=$(echo $JIRA_ISSUE | jq -r '.fields.issuetype.name' | tr "[:upper:]" "[:lower:]")
+
+ISSUE_TYPE=$(echo $ISSUE_TYPE | sed 's/story/feature/g' | sed 's/bug/bugfix/g')
+
+BRANCH_NAME="$ISSUE_TYPE/$JIRA_ID-$ISSUE_SUMMARY"
+
+#echo $BRANCH_NAME
+
+if git rev-parse --quiet --verify $BRANCH_NAME > /dev/null; then
+  git checkout "$BRANCH_NAME"
+else
+  git checkout -b "$BRANCH_NAME"
+fi
