@@ -1,28 +1,36 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+set -o errexit
+set -o pipefail
+set -o nounset
 
 if [ $# -eq 0 ]
 then
-  echo 'Usage: git-jira [issue number]'
+  echo 'Usage: git-jira [issue number]' > /dev/stderr
   exit 2
 fi
 
-JIRA_ID=$1
+jira_host=$(git config git.jira.host) || true
 
-JIRA_ISSUE=$(curl --netrc --fail --silent --header 'Accept: application/json' \
-  --url "https://locomote.atlassian.net/rest/api/2/issue/$JIRA_ID?fields=summary,issuetype")
+if [ -z "$jira_host" ]
+then
+  echo "Error: Could not find a JIRA host set use 'git config git.jira.host <host>' to set one" > /dev/stderr
+  exit 3
+fi
 
-ISSUE_SUMMARY=$(echo $JIRA_ISSUE | jq -r '.fields.summary' | sed -e "s/ /\_/g" | tr "[:upper:]" "[:lower:]")
+jira_id=$1
 
-ISSUE_TYPE=$(echo $JIRA_ISSUE | jq -r '.fields.issuetype.name' | tr "[:upper:]" "[:lower:]")
+jira_issue=$(curl --netrc --fail --silent --header 'Accept: application/json' \
+  --url "https://$jira_host/rest/api/2/issue/$jira_id?fields=summary,issuetype")
 
-ISSUE_TYPE=$(echo $ISSUE_TYPE | sed 's/story/feature/g' | sed 's/bug/bugfix/g')
+issue_summary=$(echo "$jira_issue" | jq -r '.fields.summary' | sed -e "s/ /\\_/g" | tr "[:upper:]" "[:lower:]")
 
-BRANCH_NAME="$ISSUE_TYPE/$JIRA_ID-$ISSUE_SUMMARY"
+issue_type=$(echo "$jira_issue" | jq -r '.fields.issuetype.name' | tr "[:upper:]" "[:lower:]")
 
-#echo $BRANCH_NAME
+branch_name="$issue_type/$jira_id-$issue_summary"
 
-if git rev-parse --quiet --verify $BRANCH_NAME > /dev/null; then
-  git checkout "$BRANCH_NAME"
+if git rev-parse --quiet --verify "$branch_name" > /dev/null; then
+  git checkout "$branch_name"
 else
-  git checkout -b "$BRANCH_NAME"
+  git checkout -b "$branch_name"
 fi
