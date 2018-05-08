@@ -38,7 +38,7 @@ machine example.atlassian.net
 2) Configure that same host for use within git jira
 
 ```
-$ git config --global git.jira example.atlassian.net
+$ git config --global git.jira.host example.atlassian.net
 ```
 
 That's it!
