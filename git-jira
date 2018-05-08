@@ -25,7 +25,7 @@ jira_issue=$(curl --netrc --fail --silent --header 'Accept: application/json' \
 
 issue_summary=$(echo "$jira_issue" | jq -r '.fields.summary' | sed -e "s/ /\\_/g" | tr "[:upper:]" "[:lower:]")
 
-issue_type=$(echo "$jira_issue" | jq -r '.fields.issuetype.name' | tr "[:upper:]" "[:lower:]")
+issue_type=$(echo "$jira_issue" | jq -r '.fields.issuetype.name' | sed -e "s/ /\\_/g" | tr "[:upper:]" "[:lower:]")
 
 branch_name="$issue_type/$jira_id-$issue_summary"
 
