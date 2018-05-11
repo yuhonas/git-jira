@@ -1,6 +1,10 @@
 # git JIRA
 
+![image](https://user-images.githubusercontent.com/4928/39908287-beb80866-5530-11e8-907b-f471cc00f7cf.png)
+
 Generate git branch names based on JIRA Issues
+
+## What does it look like?
 
 ![demo-optimised](https://user-images.githubusercontent.com/4928/39577887-ee3ad1a6-4f25-11e8-9edd-76aeb0d5a7e5.gif)
 
