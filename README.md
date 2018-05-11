@@ -23,7 +23,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Installing
 
-To install into your $HOME/bin directory, which I assume is in your $PATH
+To install into your `$HOME/bin` directory, which is assumed to be in your `$PATH`
 
 ```
 $ make install
